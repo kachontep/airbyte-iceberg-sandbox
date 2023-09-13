@@ -1,0 +1,30 @@
+FROM  jupyter/base-notebook:2022-12-30
+
+USER root
+
+# This is needed because requests-kerberos fails to install on debian due to missing linux headers
+RUN conda install requests-kerberos -y
+
+USER $NB_USER
+
+RUN pip install --upgrade pip
+RUN pip install --upgrade --ignore-installed setuptools
+
+USER root
+RUN chown -R $NB_USER .
+
+USER $NB_USER
+
+RUN pip install sparkmagic
+RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
+RUN jupyter-kernelspec install --user $(pip show sparkmagic | grep Location | cut -d" " -f2)/sparkmagic/kernels/sparkkernel
+RUN jupyter-kernelspec install --user $(pip show sparkmagic | grep Location | cut -d" " -f2)/sparkmagic/kernels/pysparkkernel
+RUN jupyter-kernelspec install --user $(pip show sparkmagic | grep Location | cut -d" " -f2)/sparkmagic/kernels/sparkrkernel
+RUN jupyter serverextension enable --py sparkmagic
+
+RUN jupyter notebook --generate-config -y && \
+    sed -i "s/^# c.NotebookApp.token = .*/c.NotebookApp.token = ''/" $HOME/.jupyter/jupyter_notebook_config.py
+
+CMD ["start-notebook.sh", "--NotebookApp.iopub_data_rate_limit=1000000000"]
+
+USER $NB_USER

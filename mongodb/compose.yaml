@@ -1,0 +1,18 @@
+services:
+  mongo:
+    image: mongo:4.4.22
+    container_name: airbyte-mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+      - ./sample:/sample
+    networks:
+      - airbyte_internal
+volumes:
+  mongodb_data:
+networks:
+  airbyte_internal:
+    name: airbyte_airbyte_internal
+    external: true

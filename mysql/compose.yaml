@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.0.28
+    container_name: airbyte-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./sample:/sample
+    networks:
+      - airbyte_internal
+networks:
+  airbyte_internal:
+    name: airbyte_airbyte_internal
+    external: true

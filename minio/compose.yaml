@@ -1,0 +1,21 @@
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: airbyte-minio
+    command: server /data --address :9000 --console-address :9090
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    volumes:
+      - minio_data:/data
+      - ../sample:/sample
+    networks:
+      - airbyte_internal
+    ports:
+      - 9090:9090
+volumes:
+  minio_data:
+networks:
+  airbyte_internal:
+    name: airbyte_airbyte_internal
+    external: true

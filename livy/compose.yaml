@@ -1,0 +1,29 @@
+services:
+  livy:
+    build:
+      dockerfile: Dockerfile.livy
+    container_name: airbyte-livy
+    volumes:
+      - ./conf/spark:/opt/spark/conf
+    networks:
+      - airbyte_internal
+      - default
+    ports:
+      - 8998:8998
+  jupyter:
+    build:
+      dockerfile: Dockerfile.jupyter
+    container_name: airbyte-jupyter
+    environment:
+      SPARKMAGIC_CONF_DIR: "/sparkmagic"
+    networks:
+      - default
+    volumes:
+      - ./conf/sparkmagic:/sparkmagic  
+    ports:
+      - 8888:8888
+networks:
+  default:
+  airbyte_internal:
+    name: airbyte_airbyte_internal
+    external: true

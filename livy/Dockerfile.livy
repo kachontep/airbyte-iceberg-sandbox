@@ -45,6 +45,26 @@ RUN curl --progress-bar -L --retry 3 \
   && mkdir "${LIVY_HOME}/logs" \
   && chown -R root:root "${LIVY_HOME}"
 
+# --------
+# Iceberg dependencies
+# --------
+RUN set -eux; \
+    apt-get update ; \
+    apt-get install -yq --no-install-recommends --force-yes maven ; \
+    rm -rf /var/lib/apt/lists/* \
+    ; \
+    deps=( \
+      "org.apache.iceberg:iceberg-spark-runtime-3.2_2.12:1.3.0" \
+      "software.amazon.awssdk:bundle:2.18.41" \
+      "software.amazon.awssdk:url-connection-client:2.18.41" \
+      "software.amazon.awssdk:utils:2.18.41" \
+      "org.postgresql:postgresql:42.5.0" \
+    ) ; \
+    for dep in ${deps[@]}; do \
+      mvn dependency:copy -Dartifact=${dep}:jar -DoutputDirectory=$SPARK_HOME/jars ; \
+    done ; \
+    rm -rf /root/.m2/repository/*
+
 EXPOSE 8998
 
 HEALTHCHECK CMD curl -f "http://host.docker.internal:${LIVY_PORT}/" || exit 1

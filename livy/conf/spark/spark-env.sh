@@ -71,7 +71,3 @@
 # You might get better performance to enable these options if using native BLAS (see SPARK-21305).
 # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
-export AWS_ACCESS_KEY_ID=admin
-export AWS_SECRET_ACCESS_KEY=adminadmin
-export AWS_S3_ENDPOINT=http://airbyte-minio:9000
-export AWS_REGION=us-east-1
